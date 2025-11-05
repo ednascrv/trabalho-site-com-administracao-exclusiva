@@ -11,11 +11,12 @@
             --success-color: #2ecc71;
             --danger-color: #e74c3c;
             --warning-color: #f39c12;
+            --info-color: #17a2b8;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
@@ -29,9 +30,22 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        #admin-panel { display: none; }
+        #admin-panel, #user-management { display: none; }
         
-        h2 { color: var(--primary-color); margin-bottom: 15px; }
+        h2 { 
+            color: var(--primary-color); 
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h3 {
+            color: var(--secondary-color);
+            margin: 20px 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
         
         button {
             padding: 10px 15px;
@@ -39,90 +53,433 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
         .btn-primary { background: var(--primary-color); color: white; }
         .btn-success { background: var(--success-color); color: white; }
         .btn-danger { background: var(--danger-color); color: white; }
         .btn-warning { background: var(--warning-color); color: white; }
+        .btn-info { background: var(--info-color); color: white; }
         
-        input {
+        input, select {
             padding: 10px;
             margin: 5px 0;
             width: 100%;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 14px;
         }
         
-        .recado-item {
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .recado-item, .user-item {
             border-bottom: 1px solid #eee;
-            padding: 10px 0;
+            padding: 12px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .message {
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
+        .recado-info {
+            flex: 1;
         }
         
-        .message-success { background: #eaffea; color: var(--success-color); }
-        .message-error { background: #ffeaea; color: var(--danger-color); }
+        .recado-text {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
         
-        @media (max-width: 600px) {
-            .recado-item { flex-direction: column; align-items: flex-start; }
-            .recado-actions { margin-top: 10px; }
+        .recado-meta {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .recado-categoria {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 8px;
+            background: #f0f0f0;
+        }
+        
+        .categoria-informacao { background: #e3f2fd; color: #1976d2; }
+        .categoria-aviso { background: #fff3e0; color: #f57c00; }
+        .categoria-noticia { background: #e8f5e8; color: #388e3c; }
+        .categoria-urgente { background: #ffebee; color: #d32f2f; }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-username {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .user-name {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .user-level {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .level-admin { background: var(--danger-color); color: white; }
+        .level-moderador { background: var(--warning-color); color: white; }
+        .level-usuario { background: var(--info-color); color: white; }
+        
+        .user-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+        
+        .status-ativo { background: var(--success-color); }
+        .status-inativo { background: var(--danger-color); }
+        
+        .message {
+            padding: 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid;
+        }
+        
+        .message-success { 
+            background: #eaffea; 
+            color: var(--success-color);
+            border-left-color: var(--success-color);
+        }
+        
+        .message-error { 
+            background: #ffeaea; 
+            color: var(--danger-color);
+            border-left-color: var(--danger-color);
+        }
+        
+        .message-info { 
+            background: #e6f0ff; 
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .recado-item, .user-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .recado-actions, .user-actions {
+                margin-top: 10px;
+                width: 100%;
+                display: flex;
+                gap: 5px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Área Pública -->
     <div class="area">
         <h2>🌐 Recados Públicos</h2>
         <div id="public-message"></div>
         <div id="public-recados-list">Carregando...</div>
-        <button class="btn-primary" onclick="loadRecados()">Atualizar</button>
+        <button class="btn-primary" onclick="loadRecados()">Atualizar Recados</button>
     </div>
 
+    <!-- Login -->
     <div class="area" id="login-form">
-        <h2>🔑 Login Admin</h2>
+        <h2>🔑 Login</h2>
         <div id="login-message"></div>
         <input type="text" id="username" placeholder="Usuário">
         <input type="password" id="password" placeholder="Senha">
         <button class="btn-primary" onclick="doLogin()">Entrar</button>
-        <p><small>Use: admin / 123456</small></p>
+        <p><small>Usuários disponíveis: user (123456789) ou moderador (123456)</small></p>
     </div>
 
+    <!-- Painel Administrativo -->
     <div class="area" id="admin-panel">
-        <h2>🛠️ Painel Admin</h2>
+        <h2>🛠️ Painel Administrativo</h2>
         <div id="admin-message"></div>
         
+        <!-- Estatísticas -->
+        <div class="stats" id="stats-panel"></div>
+        
         <h3>Adicionar Recado</h3>
-        <input type="text" id="new-recado-text" placeholder="Digite o recado...">
-        <button class="btn-success" onclick="addRecado()">Adicionar</button>
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="new-recado-text" placeholder="Digite o recado...">
+            </div>
+            <div class="form-group">
+                <select id="new-recado-categoria">
+                    <option value="informacao">Informação</option>
+                    <option value="aviso">Aviso</option>
+                    <option value="noticia">Notícia</option>
+                    <option value="urgente">Urgente</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn-success" onclick="addRecado()">Adicionar Recado</button>
         
         <h3>Gerenciar Recados</h3>
         <div id="admin-recados-list"></div>
         
-        <button class="btn-primary" onclick="doLogout()">Sair</button>
-        <button class="btn-warning" onclick="resetData()" style="margin-left: 10px;">Resetar Dados</button>
+        <div class="action-buttons">
+            <button class="btn-primary" onclick="showUserManagement()">Gerenciar Usuários</button>
+            <button class="btn-info" onclick="showChangePassword()">Alterar Minha Senha</button>
+            <button class="btn-warning" onclick="resetData()">Resetar Dados</button>
+            <button class="btn-danger" onclick="doLogout()">Sair</button>
+        </div>
+    </div>
+
+    <!-- Gerenciamento de Usuários -->
+    <div class="area" id="user-management">
+        <h2>👥 Gerenciamento de Usuários</h2>
+        <div id="user-message"></div>
+        
+        <h3>Adicionar Novo Usuário</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="new-user-username" placeholder="Nome de usuário">
+            </div>
+            <div class="form-group">
+                <input type="password" id="new-user-password" placeholder="Senha">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <input type="text" id="new-user-name" placeholder="Nome completo">
+            </div>
+            <div class="form-group">
+                <input type="email" id="new-user-email" placeholder="E-mail">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <select id="new-user-level">
+                    <option value="usuario">Usuário</option>
+                    <option value="moderador">Moderador</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select id="new-user-ativo">
+                    <option value="true">Ativo</option>
+                    <option value="false">Inativo</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn-success" onclick="addUser()">Adicionar Usuário</button>
+        
+        <h3>Usuários do Sistema</h3>
+        <div id="users-list"></div>
+        
+        <div class="action-buttons">
+            <button class="btn-primary" onclick="showAdminPanel()">Voltar ao Painel</button>
+        </div>
+    </div>
+
+    <!-- Modal Alterar Senha -->
+    <div class="modal" id="change-password-modal">
+        <div class="modal-content">
+            <h2>🔒 Alterar Senha</h2>
+            <div class="form-group">
+                <input type="password" id="current-password" placeholder="Senha atual">
+            </div>
+            <div class="form-group">
+                <input type="password" id="new-password" placeholder="Nova senha">
+            </div>
+            <div class="form-group">
+                <input type="password" id="confirm-password" placeholder="Confirmar nova senha">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="changePassword()">Alterar Senha</button>
+                <button class="btn-danger" onclick="hideModal('change-password-modal')">Cancelar</button>
+            </div>
+        </div>
     </div>
 
     <script>
         // Configuração
-        const ADMIN_USER = 'admin';
-        const ADMIN_PASS = '123456';
-        const STORAGE_KEY = 'sistema_recados';
-        
+        const STORAGE_KEY = 'sistema_recados_avancado';
+        let currentUser = null;
         let isLoggedIn = false;
 
-        // Dados iniciais
-        const initialData = [
-            { id: 1, texto: "Bem-vindo ao sistema de recados!" },
-            { id: 2, texto: "Use o login admin para gerenciar os recados." },
-            { id: 3, texto: "Dados salvos localmente no seu navegador." }
-        ];
+        // Dados iniciais baseados no seu JSON
+        const initialData = {
+            recados: [
+                {
+                    id: 1,
+                    texto: "Primeiro recado do sistema!",
+                    autor: "Sistema",
+                    dataCriacao: "2024-01-15T10:30:00.000Z",
+                    dataAtualizacao: "2024-01-15T10:30:00.000Z",
+                    ativo: true,
+                    categoria: "informacao"
+                },
+                {
+                    id: 2,
+                    texto: "Manutenção programada para sábado às 02:00",
+                    autor: "Admin",
+                    dataCriacao: "2024-01-16T14:20:00.000Z",
+                    dataAtualizacao: "2024-01-16T14:20:00.000Z",
+                    ativo: true,
+                    categoria: "aviso"
+                },
+                {
+                    id: 3,
+                    texto: "Novos recursos serão adicionados em breve",
+                    autor: "Admin",
+                    dataCriacao: "2024-01-17T09:45:00.000Z",
+                    dataAtualizacao: "2024-01-17T09:45:00.000Z",
+                    ativo: true,
+                    categoria: "noticia"
+                }
+            ],
+            usuarios: [
+                {
+                    id: 1,
+                    username: "user",
+                    password: "123456789",
+                    email: "admin@sistema.com",
+                    nome: "Administrador Principal",
+                    nivel: "admin",
+                    ativo: true,
+                    dataCriacao: "2024-01-01T00:00:00.000Z"
+                },
+                {
+                    id: 2,
+                    username: "moderador",
+                    password: "123456",
+                    email: "moderador@sistema.com",
+                    nome: "Moderador",
+                    nivel: "moderador",
+                    ativo: true,
+                    dataCriacao: "2024-01-02T00:00:00.000Z"
+                }
+            ],
+            configuracoes: {
+                titulo: "Sistema de Recados",
+                versao: "1.0.0",
+                maxRecados: 100,
+                recadosPorPagina: 10,
+                permiteHTML: false,
+                manutencao: false
+            }
+        };
 
         // Inicialização
         function init() {
@@ -130,26 +487,45 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
             }
             loadRecados();
-            checkLogin();
+            updatePageTitle();
+        }
+
+        // Atualizar título da página
+        function updatePageTitle() {
+            const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            document.title = data.configuracoes.titulo + " " + data.configuracoes.versao;
         }
 
         // Carregar recados
         function loadRecados() {
             try {
-                const recados = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                const recadosAtivos = data.recados.filter(r => r.ativo);
                 
                 // Área pública
                 const publicList = document.getElementById('public-recados-list');
-                publicList.innerHTML = recados.length > 0 
-                    ? recados.map(r => `<div class="recado-item"><span>${r.texto}</span></div>`).join('')
+                publicList.innerHTML = recadosAtivos.length > 0 
+                    ? recadosAtivos.map(r => `
+                        <div class="recado-item">
+                            <div class="recado-info">
+                                <div class="recado-text">${r.texto}</div>
+                                <div class="recado-meta">
+                                    Por: ${r.autor} • 
+                                    ${formatDate(r.dataCriacao)}
+                                    <span class="recado-categoria categoria-${r.categoria}">
+                                        ${getCategoriaNome(r.categoria)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')
                     : '<p>Nenhum recado encontrado.</p>';
                 
                 // Área admin (se logado)
                 if (isLoggedIn) {
-                    renderAdminList(recados);
+                    renderAdminList(data.recados);
+                    renderStats(data);
                 }
-                
-                showMessage('public-message', `${recados.length} recados carregados`, 'success', 2000);
                 
             } catch (error) {
                 showMessage('public-message', 'Erro ao carregar recados', 'error');
@@ -162,13 +538,55 @@
             adminList.innerHTML = recados.length > 0 
                 ? recados.map(r => `
                     <div class="recado-item">
-                        <span>${r.texto}</span>
+                        <div class="recado-info">
+                            <div class="recado-text">${r.texto}</div>
+                            <div class="recado-meta">
+                                Por: ${r.autor} • 
+                                Criado: ${formatDate(r.dataCriacao)} • 
+                                Atualizado: ${formatDate(r.dataAtualizacao)}
+                                <span class="recado-categoria categoria-${r.categoria}">
+                                    ${getCategoriaNome(r.categoria)}
+                                </span>
+                                ${r.ativo ? '' : '<span style="color: red;"> (Inativo)</span>'}
+                            </div>
+                        </div>
                         <div class="recado-actions">
+                            <button class="btn-warning" onclick="toggleRecadoStatus(${r.id})">
+                                ${r.ativo ? 'Desativar' : 'Ativar'}
+                            </button>
                             <button class="btn-danger" onclick="deleteRecado(${r.id})">Remover</button>
                         </div>
                     </div>
                 `).join('')
                 : '<p>Nenhum recado para gerenciar.</p>';
+        }
+
+        // Renderizar estatísticas
+        function renderStats(data) {
+            const statsPanel = document.getElementById('stats-panel');
+            const totalRecados = data.recados.length;
+            const recadosAtivos = data.recados.filter(r => r.ativo).length;
+            const totalUsuarios = data.usuarios.length;
+            const usuariosAtivos = data.usuarios.filter(u => u.ativo).length;
+
+            statsPanel.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalRecados}</div>
+                    <div class="stat-label">Total Recados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${recadosAtivos}</div>
+                    <div class="stat-label">Recados Ativos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalUsuarios}</div>
+                    <div class="stat-label">Total Usuários</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${usuariosAtivos}</div>
+                    <div class="stat-label">Usuários Ativos</div>
+                </div>
+            `;
         }
 
         // Adicionar recado
@@ -179,20 +597,27 @@
             }
             
             const texto = document.getElementById('new-recado-text').value.trim();
+            const categoria = document.getElementById('new-recado-categoria').value;
+
             if (!texto) {
                 showMessage('admin-message', 'Digite um texto', 'error');
                 return;
             }
 
             try {
-                const recados = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
                 const novoRecado = {
-                    id: Date.now(), // ID único baseado no timestamp
-                    texto: texto
+                    id: Date.now(),
+                    texto: texto,
+                    autor: currentUser.nome,
+                    dataCriacao: new Date().toISOString(),
+                    dataAtualizacao: new Date().toISOString(),
+                    ativo: true,
+                    categoria: categoria
                 };
                 
-                recados.push(novoRecado);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(recados));
+                data.recados.push(novoRecado);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
                 
                 document.getElementById('new-recado-text').value = '';
                 loadRecados();
@@ -203,14 +628,34 @@
             }
         }
 
+        // Alternar status do recado
+        function toggleRecadoStatus(id) {
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                const recadoIndex = data.recados.findIndex(r => r.id === id);
+                
+                if (recadoIndex !== -1) {
+                    data.recados[recadoIndex].ativo = !data.recados[recadoIndex].ativo;
+                    data.recados[recadoIndex].dataAtualizacao = new Date().toISOString();
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    loadRecados();
+                    showMessage('admin-message', 
+                        `Recado ${data.recados[recadoIndex].ativo ? 'ativado' : 'desativado'}!`, 
+                        'success', 2000);
+                }
+            } catch (error) {
+                showMessage('admin-message', 'Erro ao alterar status', 'error');
+            }
+        }
+
         // Remover recado
         function deleteRecado(id) {
-            if (!isLoggedIn || !confirm('Confirmar remoção?')) return;
+            if (!isLoggedIn || !confirm('Confirmar remoção permanente?')) return;
             
             try {
-                const recados = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-                const novosRecados = recados.filter(r => r.id !== id);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(novosRecados));
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                data.recados = data.recados.filter(r => r.id !== id);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
                 
                 loadRecados();
                 showMessage('admin-message', 'Recado removido!', 'success', 2000);
@@ -225,48 +670,269 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            if (username === ADMIN_USER && password === ADMIN_PASS) {
-                isLoggedIn = true;
-                document.getElementById('login-form').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                showMessage('login-message', '', 'success');
-                loadRecados();
-            } else {
-                showMessage('login-message', 'Credenciais incorretas', 'error');
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                const usuario = data.usuarios.find(u => 
+                    u.username === username && 
+                    u.password === password && 
+                    u.ativo === true
+                );
+                
+                if (usuario) {
+                    isLoggedIn = true;
+                    currentUser = usuario;
+                    document.getElementById('login-form').style.display = 'none';
+                    document.getElementById('admin-panel').style.display = 'block';
+                    showMessage('login-message', '', 'success');
+                    loadRecados();
+                } else {
+                    showMessage('login-message', 'Credenciais incorretas ou usuário inativo', 'error');
+                }
+            } catch (error) {
+                showMessage('login-message', 'Erro no sistema', 'error');
             }
         }
 
         // Logout
         function doLogout() {
             isLoggedIn = false;
+            currentUser = null;
             document.getElementById('login-form').style.display = 'block';
             document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('user-management').style.display = 'none';
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
             showMessage('login-message', 'Logout realizado', 'success');
         }
 
-        // Verificar se já está logado
-        function checkLogin() {
-            // Poderia usar sessionStorage para manter login entre atualizações
-            const savedLogin = sessionStorage.getItem('isLoggedIn');
-            if (savedLogin === 'true') {
-                isLoggedIn = true;
-                document.getElementById('login-form').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
+        // Mostrar gerenciamento de usuários
+        function showUserManagement() {
+            if (currentUser.nivel !== 'admin') {
+                showMessage('admin-message', 'Apenas administradores podem gerenciar usuários', 'error');
+                return;
+            }
+            
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('user-management').style.display = 'block';
+            loadUsers();
+        }
+
+        // Voltar ao painel admin
+        function showAdminPanel() {
+            document.getElementById('user-management').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+        }
+
+        // Carregar usuários
+        function loadUsers() {
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                const usersList = document.getElementById('users-list');
+                
+                usersList.innerHTML = data.usuarios.map(user => `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <span class="user-username">${user.username}</span>
+                            <span class="user-level level-${user.nivel}">${user.nivel}</span>
+                            <span class="user-status status-${user.ativo ? 'ativo' : 'inativo'}"></span>
+                            <div class="user-name">${user.nome}</div>
+                            <div class="user-email" style="font-size: 12px; color: #888;">${user.email}</div>
+                            <div class="user-meta" style="font-size: 11px; color: #aaa;">
+                                Criado em: ${formatDate(user.dataCriacao)}
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn-warning" onclick="editUser(${user.id})">Editar</button>
+                            ${user.id !== currentUser.id ? 
+                                `<button class="btn-danger" onclick="deleteUser(${user.id})">Excluir</button>` : 
+                                ''
+                            }
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                showMessage('user-message', 'Erro ao carregar usuários', 'error');
+            }
+        }
+
+        // Adicionar usuário
+        function addUser() {
+            const username = document.getElementById('new-user-username').value.trim();
+            const password = document.getElementById('new-user-password').value;
+            const nome = document.getElementById('new-user-name').value.trim();
+            const email = document.getElementById('new-user-email').value.trim();
+            const level = document.getElementById('new-user-level').value;
+            const ativo = document.getElementById('new-user-ativo').value === 'true';
+
+            if (!username || !password || !nome || !email) {
+                showMessage('user-message', 'Preencha todos os campos', 'error');
+                return;
+            }
+
+            if (password.length < 4) {
+                showMessage('user-message', 'A senha deve ter pelo menos 4 caracteres', 'error');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                
+                // Verificar se usuário já existe
+                if (data.usuarios.find(u => u.username === username)) {
+                    showMessage('user-message', 'Usuário já existe', 'error');
+                    return;
+                }
+
+                const novoUsuario = {
+                    id: Date.now(),
+                    username: username,
+                    password: password,
+                    email: email,
+                    nome: nome,
+                    nivel: level,
+                    ativo: ativo,
+                    dataCriacao: new Date().toISOString()
+                };
+
+                data.usuarios.push(novoUsuario);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+                // Limpar formulário
+                document.getElementById('new-user-username').value = '';
+                document.getElementById('new-user-password').value = '';
+                document.getElementById('new-user-name').value = '';
+                document.getElementById('new-user-email').value = '';
+                document.getElementById('new-user-level').value = 'usuario';
+                document.getElementById('new-user-ativo').value = 'true';
+
+                loadUsers();
+                showMessage('user-message', 'Usuário adicionado com sucesso!', 'success', 2000);
+
+            } catch (error) {
+                showMessage('user-message', 'Erro ao adicionar usuário', 'error');
+            }
+        }
+
+        // Excluir usuário
+        function deleteUser(id) {
+            if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                data.usuarios = data.usuarios.filter(u => u.id !== id);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+                loadUsers();
+                showMessage('user-message', 'Usuário excluído com sucesso!', 'success', 2000);
+
+            } catch (error) {
+                showMessage('user-message', 'Erro ao excluir usuário', 'error');
+            }
+        }
+
+        // Mostrar modal de alteração de senha
+        function showChangePassword() {
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+            showModal('change-password-modal');
+        }
+
+        // Alterar senha
+        function changePassword() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Preencha todos os campos');
+                return;
+            }
+
+            if (newPassword.length < 4) {
+                alert('A nova senha deve ter pelo menos 4 caracteres');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('As senhas não coincidem');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                const usuarioIndex = data.usuarios.findIndex(u => u.id === currentUser.id);
+
+                if (usuarioIndex === -1) {
+                    alert('Usuário não encontrado');
+                    return;
+                }
+
+                if (data.usuarios[usuarioIndex].password !== currentPassword) {
+                    alert('Senha atual incorreta');
+                    return;
+                }
+
+                data.usuarios[usuarioIndex].password = newPassword;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+                // Atualizar currentUser
+                currentUser.password = newPassword;
+
+                hideModal('change-password-modal');
+                showMessage('admin-message', 'Senha alterada com sucesso!', 'success', 2000);
+
+            } catch (error) {
+                alert('Erro ao alterar senha');
+            }
+        }
+
+        // Editar usuário (simplificado)
+        function editUser(id) {
+            if (id === currentUser.id) {
+                showChangePassword();
+            } else {
+                alert('Funcionalidade de edição de outros usuários em desenvolvimento');
             }
         }
 
         // Resetar dados
         function resetData() {
-            if (confirm('Resetar todos os dados para os valores iniciais?')) {
+            if (confirm('Isso irá resetar TODOS os dados para os valores iniciais. Continuar?')) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
                 loadRecados();
-                showMessage('admin-message', 'Dados resetados!', 'success', 2000);
+                if (isLoggedIn) {
+                    loadUsers();
+                }
+                showMessage('admin-message', 'Dados resetados com sucesso!', 'success', 2000);
             }
         }
 
-        // Utilidades
+        // Funções utilitárias
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR');
+        }
+
+        function getCategoriaNome(categoria) {
+            const categorias = {
+                'informacao': 'Informação',
+                'aviso': 'Aviso',
+                'noticia': 'Notícia',
+                'urgente': 'Urgente'
+            };
+            return categorias[categoria] || categoria;
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
         function showMessage(elementId, message, type, timeout = 0) {
             const element = document.getElementById(elementId);
             element.textContent = message;
@@ -291,6 +957,13 @@
         
         document.getElementById('new-recado-text').addEventListener('keypress', e => {
             if (e.key === 'Enter') addRecado();
+        });
+
+        // Fechar modal clicando fora
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
         });
 
         // Iniciar
