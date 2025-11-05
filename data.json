@@ -1,0 +1,61 @@
+{
+  "recados": [
+    {
+      "id": 1,
+      "texto": "Primeiro recado do sistema!",
+      "autor": "Sistema",
+      "dataCriacao": "2024-01-15T10:30:00.000Z",
+      "dataAtualizacao": "2024-01-15T10:30:00.000Z",
+      "ativo": true,
+      "categoria": "informacao"
+    },
+    {
+      "id": 2,
+      "texto": "Manutenção programada para sábado às 02:00",
+      "autor": "Admin",
+      "dataCriacao": "2024-01-16T14:20:00.000Z",
+      "dataAtualizacao": "2024-01-16T14:20:00.000Z",
+      "ativo": true,
+      "categoria": "aviso"
+    },
+    {
+      "id": 3,
+      "texto": "Novos recursos serão adicionados em breve",
+      "autor": "Admin",
+      "dataCriacao": "2024-01-17T09:45:00.000Z",
+      "dataAtualizacao": "2024-01-17T09:45:00.000Z",
+      "ativo": true,
+      "categoria": "noticia"
+    }
+  ],
+  "usuarios": [
+    {
+      "id": 1,
+      "username": "user",
+      "password": "123456789",
+      "email": "admin@sistema.com",
+      "nome": "Administrador Principal",
+      "nivel": "admin",
+      "ativo": true,
+      "dataCriacao": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "username": "moderador",
+      "password": "123456",
+      "email": "moderador@sistema.com",
+      "nome": "Moderador",
+      "nivel": "moderador",
+      "ativo": true,
+      "dataCriacao": "2024-01-02T00:00:00.000Z"
+    }
+  ],
+  "configuracoes": {
+    "titulo": "Sistema de Recados",
+    "versao": "1.0.0",
+    "maxRecados": 100,
+    "recadosPorPagina": 10,
+    "permiteHTML": false,
+    "manutencao": false
+  }
+}

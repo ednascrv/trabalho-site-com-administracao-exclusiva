@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Recados</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --gray-color: #6c757d;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .area {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        #admin-panel {
+            display: none;
+            background-color: #f0fff0;
+        }
+        
+        #login-form {
+            border-left: 4px solid var(--primary-color);
+            background-color: #e6f0ff;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        h3 {
+            color: var(--secondary-color);
+            margin: 15px 0 10px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        input[type="text"], input[type="password"] {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .recado-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        
+        .recado-item:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .recado-item:last-child {
+            border-bottom: none;
+        }
+        
+        .recado-text {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+        
+        .recado-actions button {
+            margin-left: 5px;
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .message-error {
+            background-color: #ffeaea;
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .message-success {
+            background-color: #eaffea;
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .message-info {
+            background-color: #e6f0ff;
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .edit-form {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        .edit-form input {
+            margin-bottom: 10px;
+        }
+        
+        .edit-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray-color);
+        }
+        
+        @media (max-width: 768px) {
+            .recado-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .recado-actions {
+                margin-top: 10px;
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="public-area" class="area">
+            <h2>🌐 Recados Públicos</h2>
+            <div id="public-message"></div>
+            <ul id="public-recados-list">
+                <li class="loading">Carregando recados...</li>
+            </ul>
+            <button class="btn-primary" onclick="loadRecados()">Atualizar Recados</button>
+        </div>
+
+        <div id="login-form" class="area">
+            <h2>🔑 Login do Administrador</h2>
+            <div id="login-message"></div>
+            <input type="text" id="username" placeholder="Usuário">
+            <input type="password" id="password" placeholder="Senha">
+            <button class="btn-primary" onclick="doLogin()">Entrar</button>
+            <p style="margin-top: 10px; font-size: 14px; color: var(--gray-color);">
+                Dica: Use "user" e "123456789" para fazer login
+            </p>
+        </div>
+
+        <div id="admin-panel" class="area">
+            <h2>🛠️ Painel de Administração</h2>
+            <div id="admin-message"></div>
+            
+            <h3>Adicionar Novo Recado</h3>
+            <input type="text" id="new-recado-text" placeholder="Digite o novo recado...">
+            <button class="btn-success" onclick="addRecado()">Adicionar Recado</button>
+            
+            <hr>
+            
+            <h3>Gerenciar Recados</h3>
+            <div id="admin-recados-list">
+                <p class="loading">Carregando recados para edição...</p>
+            </div>
+            
+            <hr>
+            <button class="btn-primary" onclick="doLogout()">Sair do Painel Admin</button>
+        </div>
+    </div>
+
+    <script>
+        let isLoggedIn = false;
+        let recados = [];
+
+        // --- FUNÇÕES DE CARREGAMENTO E RENDERIZAÇÃO ---
+
+        async function loadRecados() {
+            showMessage('public-message', 'Carregando recados...', 'info');
+            
+            try {
+                const response = await fetch('/api/recados');
+                
+                if (!response.ok) {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+                
+                recados = await response.json();
+                
+                // Renderiza na Área Pública
+                renderPublicList();
+                
+                // Renderiza na Área Admin (se logado)
+                if (isLoggedIn) {
+                    renderAdminList();
+                }
+                
+                showMessage('public-message', 'Recados carregados com sucesso!', 'success', 3000);
+                
+            } catch (error) {
+                console.error('Erro ao carregar recados:', error);
+                document.getElementById('public-recados-list').innerHTML = 
+                    '<li class="message-error">Erro ao carregar recados. Verifique se o servidor está funcionando.</li>';
+                showMessage('public-message', 'Erro ao carregar recados.', 'error');
+            }
+        }
+
+        function renderPublicList() {
+            const publicList = document.getElementById('public-recados-list');
+            
+            if (recados.length === 0) {
+                publicList.innerHTML = '<li class="loading">Nenhum recado encontrado.</li>';
+                return;
+            }
+            
+            publicList.innerHTML = recados.map(r => `
+                <li class="recado-item">
+                    <div class="recado-text">${escapeHtml(r.texto)}</div>
+                </li>
+            `).join('');
+        }
+
+        function renderAdminList() {
+            const adminList = document.getElementById('admin-recados-list');
+            
+            if (recados.length === 0) {
+                adminList.innerHTML = '<p class="loading">Nenhum recado para gerenciar.</p>';
+                return;
+            }
+            
+            adminList.innerHTML = recados.map(r => `
+                <div class="recado-item" data-id="${r.id}">
+                    <div class="recado-text" id="text-${r.id}">${escapeHtml(r.texto)}</div>
+                    <div class="recado-actions">
+                        <button class="btn-warning" onclick="toggleEditForm(${r.id})">Editar</button>
+                        <button class="btn-danger" onclick="deleteRecado(${r.id})">Remover</button>
+                    </div>
+                    <div class="edit-form" id="edit-form-${r.id}">
+                        <input type="text" id="edit-text-${r.id}" value="${escapeHtml(r.texto)}">
+                        <div class="edit-actions">
+                            <button class="btn-success" onclick="saveRecado(${r.id})">Salvar</button>
+                            <button class="btn-primary" onclick="toggleEditForm(${r.id})">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- FUNÇÕES DE ADMINISTRAÇÃO (CRUD) ---
+
+        async function addRecado() {
+            if (!isLoggedIn) {
+                showMessage('admin-message', 'Faça login primeiro.', 'error');
+                return;
+            }
+            
+            const texto = document.getElementById('new-recado-text').value.trim();
+            if (!texto) {
+                showMessage('admin-message', 'Digite um texto para o recado.', 'error');
+                return;
+            }
+
+            try {
+                showMessage('admin-message', 'Adicionando recado...', 'info');
+                
+                const response = await fetch('/api/recados', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto: texto })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('new-recado-text').value = '';
+                    await loadRecados();
+                    showMessage('admin-message', 'Recado adicionado com sucesso!', 'success', 3000);
+                } else {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Erro ao adicionar recado:', error);
+                showMessage('admin-message', 'Erro ao adicionar recado. Tente novamente.', 'error');
+            }
+        }
+
+        async function saveRecado(id) {
+            if (!isLoggedIn) return;
+            
+            const texto = document.getElementById(`edit-text-${id}`).value.trim();
+            if (!texto) {
+                showMessage('admin-message', 'O texto não pode estar vazio.', 'error');
+                return;
+            }
+
+            try {
+                showMessage('admin-message', 'Salvando alterações...', 'info');
+                
+                const response = await fetch(`/api/recados/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto: texto })
+                });
+                
+                if (response.ok) {
+                    toggleEditForm(id);
+                    await loadRecados();
+                    showMessage('admin-message', 'Recado atualizado com sucesso!', 'success', 3000);
+                } else {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar recado:', error);
+                showMessage('admin-message', 'Erro ao atualizar recado. Tente novamente.', 'error');
+            }
+        }
+
+        async function deleteRecado(id) {
+            if (!isLoggedIn) return;
+            
+            if (!confirm('Tem certeza que deseja remover este recado?')) return;
+
+            try {
+                showMessage('admin-message', 'Removendo recado...', 'info');
+                
+                const response = await fetch(`/api/recados/${id}`, { method: 'DELETE' });
+                
+                if (response.ok) {
+                    await loadRecados();
+                    showMessage('admin-message', 'Recado removido com sucesso!', 'success', 3000);
+                } else {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Erro ao remover recado:', error);
+                showMessage('admin-message', 'Erro ao remover recado. Tente novamente.', 'error');
+            }
+        }
+        
+        function toggleEditForm(id) {
+            const form = document.getElementById(`edit-form-${id}`);
+            const isVisible = form.style.display === 'block';
+            
+            // Esconde todos os formulários de edição primeiro
+            document.querySelectorAll('.edit-form').forEach(f => {
+                f.style.display = 'none';
+            });
+            
+            // Mostra/oculta o formulário específico
+            form.style.display = isVisible ? 'none' : 'block';
+        }
+
+        // --- FUNÇÕES DE AUTENTICAÇÃO ---
+
+        async function doLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const msgElement = document.getElementById('login-message');
+
+            showMessage('login-message', 'Verificando credenciais...', 'info');
+            
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    isLoggedIn = true;
+                    document.getElementById('login-form').style.display = 'none';
+                    document.getElementById('admin-panel').style.display = 'block';
+                    showMessage('login-message', '', 'success'); // Limpa a mensagem
+                    loadRecados();
+                } else {
+                    showMessage('login-message', 'Credenciais incorretas. Tente novamente.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro de login:', error);
+                showMessage('login-message', 'Erro de conexão. Verifique o servidor.', 'error');
+            }
+        }
+
+        function doLogout() {
+            isLoggedIn = false;
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            showMessage('login-message', 'Você saiu do painel administrativo.', 'info');
+        }
+
+        // --- FUNÇÕES AUXILIARES ---
+
+        function showMessage(elementId, message, type, timeout = 0) {
+            const element = document.getElementById(elementId);
+            
+            if (!message) {
+                element.innerHTML = '';
+                element.className = '';
+                return;
+            }
+            
+            element.innerHTML = message;
+            element.className = `message message-${type}`;
+            
+            if (timeout > 0) {
+                setTimeout(() => {
+                    element.innerHTML = '';
+                    element.className = '';
+                }, timeout);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Permitir enviar formulário com Enter
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') doLogin();
+        });
+        
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') doLogin();
+        });
+        
+        document.getElementById('new-recado-text').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addRecado();
+        });
+
+        // Inicialização
+        window.onload = loadRecados;
+    </script>
+</body>
+</html>
